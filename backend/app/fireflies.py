@@ -26,6 +26,11 @@ TRANSCRIPT_FIELDS = """
     name
     location
   }
+  meeting_info {
+    fred_joined
+    silent_meeting
+    summary_status
+  }
   summary {
     keywords
     action_items
@@ -51,8 +56,8 @@ query Transcripts(
   $toDate: DateTime
   $limit: Int
   $skip: Int
-  $organizers: [String]
-  $participants: [String]
+  $organizers: [String!]
+  $participants: [String!]
   $mine: Boolean
 ) {{
   transcripts(

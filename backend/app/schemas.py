@@ -26,6 +26,12 @@ class MeetingSummary(BaseModel):
     transcript_chapters: list[Any] | None = None
 
 
+class MeetingInfo(BaseModel):
+    fred_joined: bool | None = None
+    silent_meeting: bool | None = None
+    summary_status: str | None = None
+
+
 class TranscriptSentence(BaseModel):
     index: int | None = None
     speaker_name: str | None = None
@@ -47,6 +53,7 @@ class MeetingListItem(BaseModel):
     participants: list[str] = Field(default_factory=list)
     attendee_emails: list[str] = Field(default_factory=list)
     meeting_attendees: list[MeetingAttendee] = Field(default_factory=list)
+    meeting_info: MeetingInfo | None = None
     summary: MeetingSummary | None = None
     transcript_url: str | None = None
     audio_url: str | None = None

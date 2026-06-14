@@ -25,6 +25,12 @@ type MeetingAttendee = {
   name?: string | null;
 };
 
+type MeetingInfo = {
+  fred_joined?: boolean | null;
+  silent_meeting?: boolean | null;
+  summary_status?: string | null;
+};
+
 type TranscriptSentence = {
   index?: number | null;
   speaker_name?: string | null;
@@ -44,6 +50,7 @@ type MeetingListItem = {
   participants: string[];
   attendee_emails: string[];
   meeting_attendees: MeetingAttendee[];
+  meeting_info?: MeetingInfo | null;
   summary?: MeetingSummary | null;
   transcript_url?: string | null;
 };
@@ -322,7 +329,7 @@ function MeetingDetailView({
 
       <section className="detail-section">
         <h3>Summary</h3>
-        <Summary summary={current.summary} />
+        <Summary meetingInfo={current.meeting_info} summary={current.summary} />
       </section>
 
       <section className="detail-section">
@@ -351,13 +358,43 @@ function isMeetingDetail(meeting: MeetingListItem | MeetingDetail): meeting is M
   return "sentences" in meeting && Array.isArray(meeting.sentences);
 }
 
-function Summary({ summary }: { summary?: MeetingSummary | null }) {
-  if (!summary) {
-    return <p className="empty">No summary returned.</p>;
+function Summary({
+  meetingInfo,
+  summary
+}: {
+  meetingInfo?: MeetingInfo | null;
+  summary?: MeetingSummary | null;
+}) {
+  const hasContent = Boolean(
+    summary &&
+      (summary.overview ||
+        summary.short_overview ||
+        summary.short_summary ||
+        summary.gist ||
+        summary.bullet_gist ||
+        summary.shorthand_bullet ||
+        summary.action_items?.length ||
+        summary.topics_discussed?.length ||
+        summary.keywords?.length)
+  );
+
+  if (!summary || !hasContent) {
+    return (
+      <p className="empty">
+        No summary returned
+        {meetingInfo?.summary_status ? `; Fireflies summary status: ${meetingInfo.summary_status}` : "."}
+      </p>
+    );
   }
 
   return (
     <div className="summary-grid">
+      {meetingInfo?.summary_status && (
+        <div className="summary-block">
+          <h4>Fireflies summary status</h4>
+          <p>{meetingInfo.summary_status}</p>
+        </div>
+      )}
       <SummaryText title="Overview" value={summary.overview ?? summary.short_overview} />
       <SummaryText title="Short summary" value={summary.short_summary ?? summary.gist} />
       <SummaryText title="Bullet gist" value={summary.bullet_gist ?? summary.shorthand_bullet} />

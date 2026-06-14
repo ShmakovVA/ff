@@ -1,4 +1,4 @@
-from backend.app.fireflies import _normalize_meeting
+from backend.app.fireflies import LIST_TRANSCRIPTS_QUERY, _normalize_meeting
 from backend.app.main import _split_query_values
 from backend.app.schemas import MeetingDetail
 
@@ -12,6 +12,7 @@ def test_normalize_meeting_collects_email_sources() -> None:
             {"displayName": "Alex", "email": "alex@example.com"},
             {"displayName": "No Email"},
         ],
+        "meeting_info": {"summary_status": "skipped", "silent_meeting": False},
         "summary": {
             "overview": "Quick update",
             "action_items": "Ship MVP",
@@ -30,6 +31,8 @@ def test_normalize_meeting_collects_email_sources() -> None:
     ]
     assert meeting.summary is not None
     assert meeting.summary.action_items == ["Ship MVP"]
+    assert meeting.meeting_info is not None
+    assert meeting.meeting_info.summary_status == "skipped"
     assert meeting.sentences[0].speaker_name == "Alex"
 
 
@@ -39,3 +42,8 @@ def test_split_query_values_accepts_repeated_and_comma_separated_values() -> Non
         "b@example.com",
         "c@example.com",
     ]
+
+
+def test_transcripts_query_uses_fireflies_non_null_email_lists() -> None:
+    assert "$organizers: [String!]" in LIST_TRANSCRIPTS_QUERY
+    assert "$participants: [String!]" in LIST_TRANSCRIPTS_QUERY
