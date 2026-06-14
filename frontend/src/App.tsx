@@ -299,6 +299,8 @@ function MeetingDetailView({
     return <p className="empty">Select a meeting to see summary and transcript.</p>;
   }
 
+  const sentences = isMeetingDetail(current) ? current.sentences : [];
+
   return (
     <article>
       <div className="panel-heading">
@@ -325,9 +327,9 @@ function MeetingDetailView({
 
       <section className="detail-section">
         <h3>Transcript</h3>
-        {"sentences" in current && current.sentences.length > 0 ? (
+        {sentences.length > 0 ? (
           <div className="sentences">
-            {current.sentences.map((sentence, index) => (
+            {sentences.map((sentence, index) => (
               <div className="sentence" key={`${sentence.index ?? index}-${sentence.start_time}`}>
                 <span>{formatTimestamp(sentence.start_time)}</span>
                 <div>
@@ -343,6 +345,10 @@ function MeetingDetailView({
       </section>
     </article>
   );
+}
+
+function isMeetingDetail(meeting: MeetingListItem | MeetingDetail): meeting is MeetingDetail {
+  return "sentences" in meeting && Array.isArray(meeting.sentences);
 }
 
 function Summary({ summary }: { summary?: MeetingSummary | null }) {
