@@ -35,7 +35,7 @@ class MeetingInfo(BaseModel):
 class TranscriptSentence(BaseModel):
     index: int | None = None
     speaker_name: str | None = None
-    speaker_id: str | None = None
+    speaker_id: str | int | None = None
     text: str | None = None
     raw_text: str | None = None
     start_time: float | None = None

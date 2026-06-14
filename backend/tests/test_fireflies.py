@@ -19,7 +19,7 @@ def test_normalize_meeting_collects_email_sources() -> None:
             "keywords": ["Fireflies", "FastAPI"],
             "topics_discussed": None,
         },
-        "sentences": [{"index": 0, "speaker_name": "Alex", "text": "Hello"}],
+        "sentences": [{"index": 0, "speaker_id": 1, "speaker_name": "Alex", "text": "Hello"}],
     }
 
     meeting = MeetingDetail.model_validate(_normalize_meeting(raw))
@@ -34,6 +34,7 @@ def test_normalize_meeting_collects_email_sources() -> None:
     assert meeting.meeting_info is not None
     assert meeting.meeting_info.summary_status == "skipped"
     assert meeting.sentences[0].speaker_name == "Alex"
+    assert meeting.sentences[0].speaker_id == 1
 
 
 def test_split_query_values_accepts_repeated_and_comma_separated_values() -> None:
